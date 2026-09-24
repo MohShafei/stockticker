@@ -1,8 +1,9 @@
 package com.example.floatingkit
 
-/** Curated per-market catalog for the Markets browser page (each ≤12 = one backend call). */
+/** Market definitions. [featured] shows instantly; full listings come from
+ *  backend /symbols (Nasdaq/TwelveData/Binance) with featured as fallback. */
 data class StockDef(val symbol: String, val name: String)
-data class Market(val id: String, val label: String, val stocks: List<StockDef>)
+data class Market(val id: String, val label: String, val featured: List<StockDef>)
 
 object Markets {
 

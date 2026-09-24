@@ -82,14 +82,53 @@ object StockApi {
     /**
      * Batch quotes for the Markets page (one backend call per market, each ≤12).
      * Backend first, direct providers per-symbol fallback. Missing → absent from map.
-     */
-    suspend fun fetchQuotes(symbols: List<String>): Map<String, FloatingItem> =
+     */    suspend fun fetchQuotes(symbols: List<String>): Map<String, FloatingItem> =
         withContext(Dispatchers.IO) {
             fetchBackendMap(symbols)?.takeIf { it.isNotEmpty() }
                 ?: symbols.mapNotNull { s ->
                     try { fetchRouted(s)?.let { s.trim().uppercase() to it } }
                     catch (_: Exception) { null }
                 }.toMap()
+        }
+
+    /**
+     * Full symbol listing for a market: backend /symbols (24h cached,
+     * Nasdaq/TwelveData/Binance) with the curated featured list as fallback.
+     */
+    suspend fun fetchSymbols(market: Market): List<StockDef> =
+        withContext(Dispatchers.IO) {
+            val base = try { BuildConfig.SERVER_BASE.trim().trimEnd('/') } catch (_: Exception) { "" }
+            if (base.isNotEmpty()) {
+                try {
+                    val url = URL("$base/symbols?market=" + URLEncoder.encode(market.id, "UTF-8"))
+                    val conn = (url.openConnection() as HttpURLConnection).apply {
+                        connectTimeout = 8000; readTimeout = 20000
+                        setRequestProperty("User-Agent", UA)
+                        setRequestProperty("Accept", "application/json")
+                    }
+                    if (conn.responseCode == 200) {
+                        val body = conn.inputStream.bufferedReader().use { it.readText() }
+                        conn.disconnect()
+                        val arr = JSONObject(body).optJSONArray("symbols")
+                        if (arr != null && arr.length() > 0) {
+                            // Featured first (known-good names), then the rest.
+                            val featuredFirst = market.featured.toMutableList()
+                            val seen = featuredFirst.map { it.symbol.uppercase() }.toHashSet()
+                            for (i in 0 until arr.length()) {
+                                val o = arr.optJSONObject(i) ?: continue
+                                val sym = o.optString("symbol", "").uppercase()
+                                if (sym.isBlank() || sym in seen) continue
+                                seen.add(sym)
+                                featuredFirst.add(StockDef(sym, o.optString("name", sym)))
+                            }
+                            return@withContext featuredFirst
+                        }
+                    }
+                } catch (e: Exception) {
+                    Log.w(TAG, "symbols ${market.id} err=${e.message}")
+                }
+            }
+            market.featured
         }
 
     suspend fun getFloatingItems(context: Context): List<FloatingItem> {
