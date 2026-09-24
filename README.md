@@ -58,7 +58,7 @@ StockTicker/
 1. Open `D:\claude\StockTicker` in Android Studio.
 2. Run `app` on device (minSdk 26).
 3. Tap **1. Grant overlay permission** → allow "Display over other apps".
-4. Tap **2. Start floating service**. Edit watchlist → **Save + refresh now**, toggle mode/theme/scale — overlay shows live Yahoo prices over any app, refreshes every 60s.
+4. Tap **2. Start floating service**. Tap **Browse markets ★** → sections per market (US/UK/EU/KSA/UAE/Qatar/Kuwait/Egypt/Forex/Crypto) with live price + ★ per row; tapping ★ adds/removes that symbol from the ticker instantly. Or edit the watchlist manually → **Save + refresh now**.
 
 ## Reuse in your own app
 1. Copy `FloatingOverlayService.kt`, `FloatingModels.kt`, `DraggableContainer.kt` + `floating_*.xml`.

@@ -29,6 +29,13 @@
             android:layout_marginTop="8dp"
             android:text="@string/start_overlay" />
 
+        <Button
+            android:id="@+id/marketsBtn"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:text="@string/browse_markets" />
+
         <Switch
             android:id="@+id/overlaySwitch"
             android:layout_width="wrap_content"

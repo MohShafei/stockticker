@@ -101,11 +101,19 @@ class MainActivity : AppCompatActivity() {
             updateStatus()
         }
         findViewById<Button>(R.id.flashBtn).setOnClickListener { DemoStore.flashFirst(this) }
+        findViewById<Button>(R.id.marketsBtn).setOnClickListener {
+            startActivity(android.content.Intent(this, MarketsActivity::class.java))
+        }
     }
 
     override fun onResume() {
         super.onResume()
         updateStatus()
+        // Watchlist may have changed via ★ in Markets page.
+        findViewById<EditText>(R.id.symbolsEdit).setText(
+            getSharedPreferences(FloatingOverlayService.PREFS, MODE_PRIVATE)
+                .getString(StockApi.KEY_SYMBOLS, StockApi.DEFAULT_SYMBOLS)
+        )
     }
 
     private fun updateStatus() {

@@ -3,6 +3,8 @@
     <string name="enable_overlay">1. Grant overlay permission</string>
     <string name="start_overlay">2. Start floating service</string>
     <string name="stop_overlay">Stop floating service</string>
+    <string name="browse_markets">Browse markets ★</string>
+    <string name="markets_title">Markets</string>
     <string name="toggle_overlay">Show floating window</string>
     <string name="watchlist_label">Watchlist (comma separated, max 12)</string>
     <string name="watchlist_hint">AAPL,MSFT,HSBA.L,2222.SR,COMI.CA,EURUSD=X,BTC</string>

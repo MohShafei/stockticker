@@ -24,6 +24,11 @@
             </intent-filter>
         </activity>
 
+        <activity
+            android:name=".MarketsActivity"
+            android:exported="false"
+            android:label="@string/markets_title" />
+
         <!-- Production overlay: SYSTEM_ALERT_WINDOW + foreground service -->
         <service
             android:name=".DemoFloatingService"

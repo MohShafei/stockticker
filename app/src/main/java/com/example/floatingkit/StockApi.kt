@@ -60,6 +60,38 @@ object StockApi {
             .edit().putString(KEY_SYMBOLS, raw.uppercase()).apply()
     }
 
+    /** Star state for the Markets page — single source of truth is the watchlist. */
+    fun isFav(context: Context, symbol: String): Boolean =
+        watchlist(context).contains(symbol.trim().uppercase())
+
+    /** Toggle star → returns new state. Triggers overlay refresh. */
+    fun toggleFav(context: Context, symbol: String): Boolean {
+        val sym = symbol.trim().uppercase()
+        val current = watchlist(context).toMutableList()
+        val nowFav = if (current.contains(sym)) {
+            current.remove(sym); false
+        } else {
+            if (current.size >= 12) current.removeAt(0)
+            current.add(sym); true
+        }
+        saveWatchlist(context, current.joinToString(","))
+        FloatingOverlayService.broadcastSettings(context)
+        return nowFav
+    }
+
+    /**
+     * Batch quotes for the Markets page (one backend call per market, each ≤12).
+     * Backend first, direct providers per-symbol fallback. Missing → absent from map.
+     */
+    suspend fun fetchQuotes(symbols: List<String>): Map<String, FloatingItem> =
+        withContext(Dispatchers.IO) {
+            fetchBackendMap(symbols)?.takeIf { it.isNotEmpty() }
+                ?: symbols.mapNotNull { s ->
+                    try { fetchRouted(s)?.let { s.trim().uppercase() to it } }
+                    catch (_: Exception) { null }
+                }.toMap()
+        }
+
     suspend fun getFloatingItems(context: Context): List<FloatingItem> {
         val symbols = watchlist(context)
         // 1) Backend cache first (one shared poll serves all phones).
@@ -81,12 +113,21 @@ object StockApi {
     /** Backend-first path: GET $SERVER_BASE/quotes?symbols=… (empty base = skipped). */
     private suspend fun fetchBackend(symbols: List<String>): List<FloatingItem>? =
         withContext(Dispatchers.IO) {
+            val bySym = fetchBackendMap(symbols) ?: return@withContext null
+            val out = ArrayList<FloatingItem>(bySym.size)
+            // Preserve watchlist order.
+            for (s in symbols) bySym[s.uppercase()]?.let { out += it }
+            out.ifEmpty { null }
+        }
+
+    private suspend fun fetchBackendMap(symbols: List<String>): Map<String, FloatingItem>? =
+        withContext(Dispatchers.IO) {
             val base = try { BuildConfig.SERVER_BASE.trim().trimEnd('/') } catch (_: Exception) { "" }
             if (base.isEmpty()) return@withContext null
             try {
                 val url = URL("$base/quotes?symbols=" + URLEncoder.encode(symbols.joinToString(","), "UTF-8"))
                 val conn = (url.openConnection() as HttpURLConnection).apply {
-                    connectTimeout = 8000; readTimeout = 8000
+                    connectTimeout = 8000; readTimeout = 12000
                     setRequestProperty("User-Agent", UA)
                     setRequestProperty("Accept", "application/json")
                 }
@@ -94,8 +135,6 @@ object StockApi {
                 val body = conn.inputStream.bufferedReader().use { it.readText() }
                 conn.disconnect()
                 val arr = JSONObject(body).optJSONArray("quotes") ?: return@withContext null
-                val out = ArrayList<FloatingItem>(arr.length())
-                // Preserve watchlist order.
                 val bySym = HashMap<String, FloatingItem>(arr.length())
                 for (i in 0 until arr.length()) {
                     val o = arr.optJSONObject(i) ?: continue
@@ -111,8 +150,7 @@ object StockApi {
                         badge = o.optString("badge", "").takeIf { it.isNotBlank() }
                     )
                 }
-                for (s in symbols) bySym[s.uppercase()]?.let { out += it }
-                out.ifEmpty { null }
+                bySym.ifEmpty { null }
             } catch (e: Exception) {
                 Log.w(TAG, "backend err=${e.message}")
                 null
