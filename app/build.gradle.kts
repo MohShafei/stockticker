@@ -15,8 +15,7 @@ android {
         versionName = "1.0"
 
         // Backend cache URL (see backend/). Empty = direct Yahoo/Binance from phone.
-        // Release: set to your Northflank URL, e.g. "https://xxx.code.run"
-        buildConfigField("String", "SERVER_BASE", "\"\"")
+        buildConfigField("String", "SERVER_BASE", "\"https://p01--stocksapi--xfmhqx2z5pqw.code.run\"")
     }
 
     buildTypes {
