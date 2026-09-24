@@ -1,0 +1,19 @@
+# Android
+*.iml
+.gradle/
+local.properties
+.idea/
+.DS_Store
+app/build/
+app/release/
+build/
+
+# Node
+node_modules/
+npm-debug.log
+
+# Secrets (use .env.example / env vars on host)
+.env
+backend/serviceAccountKey.json
+*.keystore
+*.jks

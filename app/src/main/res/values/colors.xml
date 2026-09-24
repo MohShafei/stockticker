@@ -1,0 +1,6 @@
+<resources>
+    <color name="text_primary">#212121</color>
+    <color name="text_secondary">#616161</color>
+    <color name="accent">#1565C0</color>
+    <color name="live_green">#2E7D32</color>
+</resources>

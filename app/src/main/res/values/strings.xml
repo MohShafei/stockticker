@@ -1,0 +1,29 @@
+<resources>
+    <string name="app_name">FloatingKit Demo</string>
+    <string name="enable_overlay">1. Grant overlay permission</string>
+    <string name="start_overlay">2. Start floating service</string>
+    <string name="stop_overlay">Stop floating service</string>
+    <string name="toggle_overlay">Show floating window</string>
+    <string name="watchlist_label">Watchlist (comma separated, max 12)</string>
+    <string name="watchlist_hint">AAPL,MSFT,HSBA.L,2222.SR,COMI.CA,EURUSD=X,BTC</string>
+    <string name="save_symbols">Save + refresh now</string>
+    <string name="refresh_now">Refresh prices now</string>
+    <string name="mode_label">Window mode</string>
+    <string name="mode_single">One window (cycle)</string>
+    <string name="mode_multi">Multiple windows</string>
+    <string name="mode_stack">Stack (all in one)</string>
+    <string name="mode_ticker">Ticker (top strip)</string>
+    <string name="theme_label">Theme</string>
+    <string name="scale_label">Window size: %1$.1fx</string>
+    <string name="flash_item">Test flash pulse</string>
+    <string name="overlay_no_items">No items</string>
+    <string name="overlay_tap_hint">Tap to expand • drag to move</string>
+    <string name="status_can_draw">Overlay permission granted — start the service</string>
+    <string name="status_no_draw">Overlay NOT allowed — tap the button above</string>
+    <string name="status_service_on">Service running</string>
+    <string name="status_service_off">Service stopped</string>
+    <string name="overlay_channel_name">Floating ticker</string>
+    <string name="overlay_channel_desc">Keeps the floating stock ticker running</string>
+    <string name="overlay_notif_title">Floating ticker running</string>
+    <string name="overlay_notif_text">Tap in app to configure or stop</string>
+</resources>
