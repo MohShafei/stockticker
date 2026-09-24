@@ -40,13 +40,11 @@ object Markets {
             StockDef("2010.SR", "SABIC"),
             StockDef("1180.SR", "Alinma")
         )),
-        Market("uae", "🇦🇪 UAE", listOf(
+        Market("uae", "🇦🇪 UAE (DFM)", listOf(
             StockDef("EMAAR.AE", "Emaar"),
             StockDef("DIB.AE", "Dubai Islamic Bank"),
             StockDef("DEWA.AE", "DEWA"),
-            StockDef("FAB.AE", "First Abu Dhabi"),
-            StockDef("ALDAR.AE", "Aldar"),
-            StockDef("ADCB.AE", "AD Commercial Bank")
+            StockDef("SALIK.AE", "Salik")
         )),
         Market("qa", "🇶🇦 Qatar", listOf(
             StockDef("QNB.QA", "QNB"),
